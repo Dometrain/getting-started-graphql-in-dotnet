@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    paths-ignore:
+      - 'schema.graphql'  # Ignore changes to schema.graphql
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.head_ref }}
+        fetch-depth: 0  # Ensures all history is fetched
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: |
+        dotnet restore src
+        dotnet tool restore
+
+    - name: Build
+      run: dotnet build src --no-restore -c Release
+
+    - name: Test
+      run: dotnet test src --no-build --verbosity normal
+
+    - name: Export Schema
+      run: dotnet run --project src/Catalog.API -- schema export --output ../../schema.graphql
+
+    - name: Validate Schema
+      run: dotnet barista schema validate --schema-file ./schema.graphql --stage dev --api-id ${{ secrets.API_ID }} --api-key ${{ secrets.API_KEY }}
+
+    - name: Validate Schema
+      run: dotnet barista client validate --operations-file PersistedQueries/queries.json --stage dev --client-id ${{ secrets.CLIENT_ID }} --api-key ${{ secrets.API_KEY }}
+
+    - name: Commit Schema File
+      if: github.actor != 'github-actions[bot]' # Avoid self-triggering of the workflow
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add schema.graphql
+        git commit -m "Add updated schema.graphql"
+        git push origin ${{ github.head_ref }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

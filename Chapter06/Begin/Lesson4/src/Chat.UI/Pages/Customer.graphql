@@ -1,0 +1,16 @@
+query GetHomeProducts {
+    products {
+        nodes {
+            ... ProductSelector
+        }
+    }
+}
+
+mutation StartNewChat($productId: ID!) {
+    startChat(input: {productId: $productId }) {
+        sessionId
+        errors {
+            code: __typename
+        }
+    }
+}

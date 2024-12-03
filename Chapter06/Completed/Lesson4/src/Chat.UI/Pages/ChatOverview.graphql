@@ -1,0 +1,9 @@
+fragment CustomerChat on ChatStartedMessage {
+    sessionId
+    product {
+        id
+        name
+    }
+    customerName
+    time
+}

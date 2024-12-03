@@ -1,0 +1,15 @@
+﻿@page "/"
+
+<PageTitle>Products</PageTitle>
+
+<UseGetProductList Context="data">
+    <ChildContent>
+        <ul>
+        @foreach (var product in data.Products!.Nodes!)
+        {
+            <ProductCard Product="@product"/>
+        }
+        </ul>
+    </ChildContent>
+    
+</UseGetProductList>

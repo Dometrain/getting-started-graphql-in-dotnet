@@ -1,0 +1,13 @@
+﻿type Query {
+  sayHello(name: String! = "World"): String!
+  book: Book!
+}
+
+type Author {
+  name: String!
+}
+
+type Book {
+  title: String!
+  author: Author!
+}

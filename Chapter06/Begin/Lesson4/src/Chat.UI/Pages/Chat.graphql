@@ -1,0 +1,12 @@
+subscription OnChatMessage($sessionId: String!) {
+    onChatMessage(sessionId: $sessionId) {
+        from
+        text
+    }
+}
+
+mutation SendChatMessage($sessionId: String!, $text: String!) {
+    sendMessage(input: { sessionId: $sessionId, text: $text }) {
+        success
+    }
+}

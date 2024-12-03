@@ -1,0 +1,7 @@
+query GetProductList {
+    products {
+        nodes {
+            ... ProductCard
+        }
+    }
+}

@@ -1,0 +1,63 @@
+@using System.Reactive.Linq
+@using StrawberryShake
+@implements IDisposable
+@inject OnChatMessageSubscription OnChatMessage;
+@inject SendChatMessageMutation SendChatMessage;
+
+@code {
+    private IDisposable _session = default!;
+    private List<string> _messages = new();
+    private string? _message;
+
+    [Parameter] public string SessionId { get; set; } = default!;
+
+    protected override void OnInitialized()
+    {
+        _session = OnChatMessage
+            .Watch(SessionId)
+            .Where(result => result.IsSuccessResult())
+            .Select(result => result.Data!.OnChatMessage)
+            .Subscribe(message =>
+            {
+                _messages.Add($"{message.From}: {message.Text}");
+                StateHasChanged();
+            });
+    }
+
+    private async Task SendMessage()
+    {
+        if (!string.IsNullOrEmpty(_message))
+        {
+            await SendChatMessage.ExecuteAsync(SessionId, _message);
+            _message = string.Empty;
+        }
+    }
+
+    public void Dispose()
+    {
+        _session.Dispose();
+    }
+}
+
+<div>
+    <h3>Chat Support</h3>
+    <div>
+        <div class="chat-box">
+            @foreach (var message in _messages)
+            {
+                <p>@message</p>
+            }
+        </div>
+        <input type="text" @bind="_message" placeholder="Type your message here..."/>
+        <button @onclick="SendMessage">Send</button>
+    </div>
+</div>
+
+<style>
+    .chat-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        height: 200px;
+        overflow-y: auto;
+    }
+</style>

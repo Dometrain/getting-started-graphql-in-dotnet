@@ -1,0 +1,46 @@
+@page "/Service"
+@using StrawberryShake
+@inject OnChatStartedSubscription OnChatStarted
+@inject AssignChatMutation AssignChat; 
+
+@code {
+    private string? _sessionId;
+    private IDisposable _session;
+    private readonly List<ICustomerChat> _openChats = new();
+
+    protected override void OnInitialized()
+    {
+        UserContext.UserId = "2";
+        
+        OnChatStarted
+            .Watch()
+            .Subscribe(result =>
+            {
+                if (result.IsSuccessResult())
+                {
+                    _openChats.Add(result.Data!.OnChatStarted);
+                    StateHasChanged();
+                }
+            });
+    }
+
+    private async Task StartChat(ICustomerChat chat)
+    {
+        var result = await AssignChat.ExecuteAsync(chat.SessionId);
+        result.EnsureNoErrors();
+        if (result.Data?.AssignChat.Success ?? false)
+        {
+            _sessionId = chat.SessionId;
+            _openChats.Remove(chat);
+        }
+    }
+}
+
+<h3>New Customer Chats</h3>
+
+<ChatOverview OpenChats="@_openChats" StartChat="StartChat" />
+
+@if (!string.IsNullOrEmpty(_sessionId))
+{
+    <Chat SessionId="@_sessionId" />
+}

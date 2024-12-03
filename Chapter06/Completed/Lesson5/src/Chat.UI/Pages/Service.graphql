@@ -1,0 +1,11 @@
+subscription OnChatStarted {
+    onChatStarted {
+        ... CustomerChat
+    }
+}
+
+mutation AssignChat($sessionId: String!) {
+    assignChat(input: { sessionId: $sessionId }) {
+        success
+    }
+}

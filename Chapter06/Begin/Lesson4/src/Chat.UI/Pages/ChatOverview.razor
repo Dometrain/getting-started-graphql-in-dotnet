@@ -1,0 +1,27 @@
+@code {
+    [Parameter] public IReadOnlyList<ICustomerChat> OpenChats { get; set; } = default!;
+    
+    [Parameter] public EventCallback<ICustomerChat> StartChat { get; set; }
+}
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Time</th>
+        <th>Customer Name</th>
+        <th>Product</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var chat in OpenChats)
+    {
+        <tr>
+            <td>@chat.Time</td>
+            <td>@chat.CustomerName</td>
+            <td>@chat.Product.Name</td>
+            <td><button @onclick="() => StartChat.InvokeAsync(chat)">Start Chat</button></td>
+        </tr>
+    }
+    </tbody>
+</table>

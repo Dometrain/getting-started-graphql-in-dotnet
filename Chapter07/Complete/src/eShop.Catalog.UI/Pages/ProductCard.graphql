@@ -1,0 +1,7 @@
+fragment ProductCard on Product {
+    name
+    brand {
+        name
+    }
+    price
+}

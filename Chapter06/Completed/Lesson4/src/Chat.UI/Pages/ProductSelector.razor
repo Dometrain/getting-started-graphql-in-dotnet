@@ -1,0 +1,22 @@
+@code {
+    [Parameter] public IReadOnlyList<IProductSelector> Products { get; set; } = default!;
+    
+    [Parameter] public EventCallback<string> OnProductSelected { get; set; }
+
+    private async Task OnSelected(ChangeEventArgs obj)
+    {
+        if (obj.Value is string productId and not "none")
+        {
+            await OnProductSelected.InvokeAsync(productId);
+        }
+    }
+}
+
+Select a product you want help on:
+<select name="ProductsSelection" @onchange="OnSelected">
+    <option value="none">Select a product</option>
+    @foreach (var product in Products)
+    {
+        <option value="@product.Id">@product.Name</option>
+    }
+</select>

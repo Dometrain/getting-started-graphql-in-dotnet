@@ -1,0 +1,4 @@
+fragment ProductSelector on Product {
+    id
+    name
+}

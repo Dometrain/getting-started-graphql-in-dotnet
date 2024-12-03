@@ -1,0 +1,38 @@
+﻿@page "/"
+@using StrawberryShake
+@inject StartNewChatMutation StartNewChat
+
+@code {
+    private string? _sessionId;
+
+    protected override void OnInitialized()
+    {
+        UserContext.UserId = "1";
+    }
+
+    private async Task OnProductSelected(string productId)
+    {
+        var result = await StartNewChat.ExecuteAsync(productId);
+        result.EnsureNoErrors();
+        _sessionId = result.Data!.StartChat.SessionId!;
+        StateHasChanged();
+    }
+
+    protected override bool ShouldRender() => true;
+}
+
+<PageTitle>Customer</PageTitle>
+
+<UseGetHomeProducts Context="data" Strategy="ExecutionStrategy.CacheFirst">
+    <ChildContent>
+        <ProductSelector Products="data.Products!.Nodes" OnProductSelected="OnProductSelected"/>
+    </ChildContent>
+    <LoadingContent>
+        Loading products ...
+    </LoadingContent>
+</UseGetHomeProducts>
+
+@if (!string.IsNullOrEmpty(_sessionId))
+{
+    <Chat SessionId="@_sessionId"/>
+}

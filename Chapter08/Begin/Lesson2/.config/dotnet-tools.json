@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "dotnet-ef": {
+      "version": "8.0.0",
+      "commands": [
+        "dotnet-ef"
+      ]
+    },
+    "barista": {
+      "version": "8.3.0",
+      "commands": [
+        "Barista"
+      ]
+    },
+    "strawberryshake.tools": {
+      "version": "13.9.4",
+      "commands": [
+        "dotnet-graphql"
+      ]
+    }
+  }
+}

@@ -1,0 +1,209 @@
+﻿schema {
+  query: Query
+}
+
+type Brand {
+  id: Int!
+  name: String!
+  products: [Product!]!
+}
+
+"A connection to a list of items."
+type BrandsConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [BrandsEdge!]
+  "A flattened list of the nodes."
+  nodes: [Brand!]
+}
+
+"An edge in a connection."
+type BrandsEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: Brand!
+}
+
+"Information about pagination in a connection."
+type PageInfo {
+  "Indicates whether more edges exist following the set defined by the clients arguments."
+  hasNextPage: Boolean!
+  "Indicates whether more edges exist prior the set defined by the clients arguments."
+  hasPreviousPage: Boolean!
+  "When paginating backwards, the cursor to continue."
+  startCursor: String
+  "When paginating forwards, the cursor to continue."
+  endCursor: String
+}
+
+type Product {
+  removeStock(quantityDesired: Int!): Int!
+  addStock(quantity: Int!): Int!
+  id: Int!
+  name: String!
+  description: String
+  price: Decimal!
+  imageFileName: String
+  typeId: Int!
+  type: ProductType
+  brandId: Int!
+  brand: Brand
+  availableStock: Int!
+  restockThreshold: Int!
+  maxStockThreshold: Int!
+  onReorder: Boolean!
+}
+
+type ProductType {
+  id: Int!
+  name: String!
+  products: [Product!]!
+}
+
+"A connection to a list of items."
+type ProductTypesConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [ProductTypesEdge!]
+  "A flattened list of the nodes."
+  nodes: [ProductType!]
+}
+
+"An edge in a connection."
+type ProductTypesEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: ProductType!
+}
+
+"A connection to a list of items."
+type ProductsConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [ProductsEdge!]
+  "A flattened list of the nodes."
+  nodes: [Product!]
+}
+
+"An edge in a connection."
+type ProductsEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: Product!
+}
+
+type Query {
+  brands("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String): BrandsConnection
+  brandById(id: Int!): Brand
+  products("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: ProductFilterInput order: [ProductSortInput!]): ProductsConnection
+  productById(id: Int!): Product
+  productTypes("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String): ProductTypesConnection
+  productTypeById(id: Int!): ProductType
+}
+
+input BrandFilterInput {
+  and: [BrandFilterInput!]
+  or: [BrandFilterInput!]
+  id: IntOperationFilterInput
+  name: DefaultStringOperationFilterInput
+  products: ListFilterInputTypeOfProductFilterInput
+}
+
+input BrandSortInput {
+  name: SortEnumType
+}
+
+input DecimalOperationFilterInput {
+  eq: Decimal
+  neq: Decimal
+  in: [Decimal]
+  nin: [Decimal]
+  gt: Decimal
+  ngt: Decimal
+  gte: Decimal
+  ngte: Decimal
+  lt: Decimal
+  nlt: Decimal
+  lte: Decimal
+  nlte: Decimal
+}
+
+input DefaultStringOperationFilterInput {
+  and: [DefaultStringOperationFilterInput!]
+  or: [DefaultStringOperationFilterInput!]
+  eq: String
+  startsWith: String
+}
+
+input IntOperationFilterInput {
+  eq: Int
+  neq: Int
+  in: [Int]
+  nin: [Int]
+  gt: Int
+  ngt: Int
+  gte: Int
+  ngte: Int
+  lt: Int
+  nlt: Int
+  lte: Int
+  nlte: Int
+}
+
+input ListFilterInputTypeOfProductFilterInput {
+  all: ProductFilterInput
+  none: ProductFilterInput
+  some: ProductFilterInput
+  any: Boolean
+}
+
+input ProductFilterInput {
+  and: [ProductFilterInput!]
+  or: [ProductFilterInput!]
+  name: SearchStringOperationFilterInput
+  type: ProductTypeFilterInput
+  brand: BrandFilterInput
+  price: DecimalOperationFilterInput
+  availableStock: IntOperationFilterInput
+}
+
+input ProductSortInput {
+  name: SortEnumType
+  price: SortEnumType
+  brand: BrandSortInput
+  type: ProductTypeSortInput
+}
+
+input ProductTypeFilterInput {
+  and: [ProductTypeFilterInput!]
+  or: [ProductTypeFilterInput!]
+  id: IntOperationFilterInput
+  name: DefaultStringOperationFilterInput
+  products: ListFilterInputTypeOfProductFilterInput
+}
+
+input ProductTypeSortInput {
+  name: SortEnumType
+}
+
+input SearchStringOperationFilterInput {
+  and: [SearchStringOperationFilterInput!]
+  or: [SearchStringOperationFilterInput!]
+  eq: String
+  startsWith: String
+  contains: String
+}
+
+enum SortEnumType {
+  ASC
+  DESC
+}
+
+"The built-in `Decimal` scalar type."
+scalar Decimal

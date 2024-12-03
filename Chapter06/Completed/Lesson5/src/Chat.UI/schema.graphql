@@ -1,0 +1,353 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+interface Error {
+  message: String!
+}
+
+"The node interface is implemented by entities that have a global unique identifier."
+interface Node {
+  id: ID!
+}
+
+type AlreadySubscribedError implements Error {
+  message: String!
+  userId: Int!
+  brandId: Int!
+}
+
+type ArgumentError implements Error {
+  message: String!
+  paramName: String
+}
+
+type AssignChatPayload {
+  success: Boolean
+}
+
+type Brand implements Node {
+  products("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String): ProductsConnection
+  id: ID!
+  name: String!
+}
+
+"A connection to a list of items."
+type BrandsConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [BrandsEdge!]
+  "A flattened list of the nodes."
+  nodes: [Brand!]
+}
+
+"An edge in a connection."
+type BrandsEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: Brand!
+}
+
+type ChatMessage {
+  id: ID!
+  text: String!
+  from: String!
+}
+
+type ChatStartedMessage {
+  product: Product!
+  sessionId: String!
+  customerName: String!
+  time: DateTime!
+}
+
+type CreateBrandPayload {
+  brand: Brand
+}
+
+type CreateProductPayload {
+  product: Product
+  errors: [CreateProductError!]
+}
+
+type DeleteBrandPayload {
+  success: Boolean
+  errors: [DeleteBrandError!]
+}
+
+type FileExtensionNotAllowedError implements Error {
+  message: String!
+  extension: String!
+  allowedExtensions: [String!]!
+}
+
+type InvalidBrandIdError implements Error {
+  id: ID!
+  message: String!
+}
+
+type InvalidProductIdError implements Error {
+  id: ID!
+  message: String!
+}
+
+type InvalidProductTypeIdError implements Error {
+  id: ID!
+  message: String!
+}
+
+type MaxStockThresholdToSmallError implements Error {
+  message: String!
+  restockThreshold: Int!
+  maxStockThreshold: Int!
+}
+
+type Mutation {
+  createBrand(input: CreateBrandInput!): CreateBrandPayload!
+  renameBrand(input: RenameBrandInput!): RenameBrandPayload!
+  deleteBrand(input: DeleteBrandInput!): DeleteBrandPayload!
+  subscribeToBrand(input: SubscribeToBrandInput!): SubscribeToBrandPayload!
+  unsubscribeToBrand(input: UnsubscribeToBrandInput!): UnsubscribeToBrandPayload!
+  startChat(input: StartChatInput!): StartChatPayload!
+  assignChat(input: AssignChatInput!): AssignChatPayload!
+  sendMessage(input: SendMessageInput!): SendMessagePayload!
+  createProduct(input: CreateProductInput!): CreateProductPayload!
+  updateProduct(input: UpdateProductInput!): UpdateProductPayload!
+  uploadProductImage(input: UploadProductImageInput!): UploadProductImagePayload!
+}
+
+"Information about pagination in a connection."
+type PageInfo {
+  "Indicates whether more edges exist following the set defined by the clients arguments."
+  hasNextPage: Boolean!
+  "Indicates whether more edges exist prior the set defined by the clients arguments."
+  hasPreviousPage: Boolean!
+  "When paginating backwards, the cursor to continue."
+  startCursor: String
+  "When paginating forwards, the cursor to continue."
+  endCursor: String
+}
+
+type Product implements Node {
+  internalId: Int!
+  imageUrl: URL!
+  brand: Brand
+  productType: ProductType
+  id: ID!
+  name: String!
+  description: String
+  price: Decimal!
+  type: ProductType
+  availableStock: Int!
+  restockThreshold: Int!
+  maxStockThreshold: Int!
+  onReorder: Boolean!
+}
+
+type ProductType implements Node {
+  products("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String): ProductsConnection
+  id: ID!
+  name: String!
+}
+
+"A connection to a list of items."
+type ProductTypesConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [ProductTypesEdge!]
+  "A flattened list of the nodes."
+  nodes: [ProductType!]
+}
+
+"An edge in a connection."
+type ProductTypesEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: ProductType!
+}
+
+"A connection to a list of items."
+type ProductsConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [ProductsEdge!]
+  "A flattened list of the nodes."
+  nodes: [Product!]
+}
+
+"An edge in a connection."
+type ProductsEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: Product!
+}
+
+type Query {
+  "Fetches an object given its ID."
+  node("ID of the object." id: ID!): Node
+  "Lookup nodes by a list of IDs."
+  nodes("The list of node IDs." ids: [ID!]!): [Node]!
+  brands("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String): BrandsConnection
+  brandById(id: ID!): Brand
+  brandByName(name: String!): Brand
+  products(where: ProductsFilterInputTypeInput "Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String): ProductsConnection
+  productById(id: ID!): Product
+  productTypes("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String): ProductTypesConnection
+  productTypeById(id: ID!): ProductType
+  productTypeByName(name: String!): ProductType
+}
+
+type RenameBrandPayload {
+  brand: Brand
+  errors: [RenameBrandError!]
+}
+
+type SendMessagePayload {
+  success: Boolean
+  errors: [SendMessageError!]
+}
+
+type StartChatPayload {
+  sessionId: String
+  errors: [StartChatError!]
+}
+
+type SubscribeToBrandPayload {
+  success: Boolean
+  errors: [SubscribeToBrandError!]
+}
+
+type Subscription {
+  onChatStarted: ChatStartedMessage!
+  onChatMessage(sessionId: String!): ChatMessage!
+  onNewProductArrival(brandIds: [ID!]): Product!
+}
+
+type UnsubscribeToBrandPayload {
+  success: Boolean
+  errors: [UnsubscribeToBrandError!]
+}
+
+type UpdateProductPayload {
+  product: Product
+  errors: [UpdateProductError!]
+}
+
+type UploadProductImagePayload {
+  product: Product
+  errors: [UploadProductImageError!]
+}
+
+type UserSessionRequiredError implements Error {
+  message: String!
+}
+
+union CreateProductError = InvalidBrandIdError | InvalidProductTypeIdError | ArgumentError | MaxStockThresholdToSmallError
+
+union DeleteBrandError = InvalidBrandIdError
+
+union RenameBrandError = InvalidBrandIdError
+
+union SendMessageError = UserSessionRequiredError
+
+union StartChatError = UserSessionRequiredError
+
+union SubscribeToBrandError = InvalidBrandIdError | AlreadySubscribedError | UserSessionRequiredError
+
+union UnsubscribeToBrandError = InvalidBrandIdError | UserSessionRequiredError
+
+union UpdateProductError = InvalidBrandIdError | InvalidProductTypeIdError | ArgumentError | MaxStockThresholdToSmallError | InvalidProductIdError
+
+union UploadProductImageError = FileExtensionNotAllowedError | InvalidProductIdError
+
+input AssignChatInput {
+  sessionId: String!
+}
+
+input CreateBrandInput {
+  name: String!
+}
+
+input CreateProductInput {
+  name: String!
+  description: String
+  price: Decimal!
+  typeId: ID!
+  brandId: ID!
+  restockThreshold: Int!
+  maxStockThreshold: Int!
+}
+
+input DeleteBrandInput {
+  id: ID!
+}
+
+input ProductsBrandIdFilterInputTypeInput {
+  in: [Int!]
+}
+
+input ProductsFilterInputTypeInput {
+  brandId: ProductsBrandIdFilterInputTypeInput
+  typeId: ProductsTypeIdFilterInputTypeInput
+}
+
+input ProductsTypeIdFilterInputTypeInput {
+  in: [Int!]
+}
+
+input RenameBrandInput {
+  id: ID!
+  name: String!
+}
+
+input SendMessageInput {
+  sessionId: String!
+  text: String!
+}
+
+input StartChatInput {
+  productId: ID!
+}
+
+input SubscribeToBrandInput {
+  id: ID!
+}
+
+input UnsubscribeToBrandInput {
+  id: ID!
+}
+
+input UpdateProductInput {
+  id: ID!
+  name: String = ""
+  description: String
+  price: Float! = 0
+  typeId: ID = "UHJvZHVjdFR5cGUKaTQ="
+  brandId: ID = "QnJhbmQKaTk="
+  restockThreshold: Int! = 0
+  maxStockThreshold: Int! = 0
+}
+
+input UploadProductImageInput {
+  id: ID!
+  file: Upload!
+}
+
+"The `DateTime` scalar represents an ISO-8601 compliant date time type."
+scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time")
+
+"The built-in `Decimal` scalar type."
+scalar Decimal
+
+scalar URL @specifiedBy(url: "https:\/\/tools.ietf.org\/html\/rfc3986")
+
+"The `Upload` scalar type represents a file upload."
+scalar Upload

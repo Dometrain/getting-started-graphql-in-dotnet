@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.3" PrivateAssets="all" />
+    <PackageReference Include="StrawberryShake.Blazor" Version="14.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Pages\Home.graphql">
+      <DependentUpon>Home.razor</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <GraphQL Update="Pages\Customer.graphql">
+      <Generator>MSBuild:GenerateGraphQLCode</Generator>
+      <DependentUpon>Customer.razor</DependentUpon>
+    </GraphQL>
+    <GraphQL Update="Pages\ProductSelector.graphql">
+      <DependentUpon>ProductSelector.razor</DependentUpon>
+    </GraphQL>
+    <GraphQL Update="Pages\Service.graphql">
+      <DependentUpon>Service.razor</DependentUpon>
+    </GraphQL>
+    <GraphQL Update="Pages\ChatOverview.graphql">
+      <DependentUpon>ChatOverview.razor</DependentUpon>
+    </GraphQL>
+    <GraphQL Update="Pages\Chat.graphql">
+      <Generator>MSBuild:GenerateGraphQLCode</Generator>
+      <DependentUpon>Chat.razor</DependentUpon>
+    </GraphQL>
+  </ItemGroup>
+
+</Project>

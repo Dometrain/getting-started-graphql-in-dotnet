@@ -1,0 +1,5 @@
+@code {
+    [Parameter] public IProductCard Product { get; set; } = default!;
+}
+
+<li>@Product.Name (@Product.Brand!.Name) $@Product.Price</li>
